@@ -23,38 +23,10 @@ public class PersonService {
         return personRepository.findById(id);
     }
 
-    // En el servicio PersonService
-// En el servicio PersonService
     public Person createPerson(Person person) {
-        // Verificar si el país está presente y no es vacío ni nulo
-        if (person.getCountry() == null || person.getCountry().trim().isEmpty()) {
-            // Lanzar una excepción si el país está vacío o nulo
-            throw new RuntimeException("El país es obligatorio.");
-        }
-
-        // Verificar si ya existe una persona con la misma combinación de tipo de documento, número de documento y país
-        boolean exists = personRepository.existsByDocumentTypeAndDocumentNumberAndCountry(
-                person.getDocumentType(), person.getDocumentNumber(), person.getCountry());
-
-        // Verificar si al menos uno de los campos de contacto (email o phoneNumber) no está vacío
-        if (person.getEmail() == null && person.getPhoneNumber() == null) {
-            // Lanzar una excepción si no hay datos de contacto
-            throw new RuntimeException("La persona debe tener al menos un dato de contacto (email o número de teléfono).");
-        }
-
-        // Verificar si la persona es menor de 18 años
-        LocalDate today = LocalDate.now();
-        LocalDate eighteenYearsAgo = today.minusYears(18);
-        if (person.getDateOfBirth().isAfter(eighteenYearsAgo)) {
-            // Lanzar una excepción si la persona es menor de 18 años
-            throw new RuntimeException("No se pueden crear personas menores de 18 años.");
-        }
-
-        // Si pasa todas las validaciones, guardar la persona en la base de datos
+        validatePersonData(person);
         return personRepository.save(person);
     }
-
-
 
     public Person updatePerson(Long id, Person updatedPerson) {
         return personRepository.findById(id)
@@ -77,4 +49,35 @@ public class PersonService {
         }
         return false;
     }
+
+    private void validatePersonData(Person person) {
+        if (person.getCountry() == null || person.getCountry().trim().isEmpty()) {
+            throw new RuntimeException("El país es obligatorio.");
+        }
+
+        boolean exists = personRepository.existsByDocumentTypeAndDocumentNumberAndCountry(person.getDocumentType(), person.getDocumentNumber(), person.getCountry());
+
+        if (exists) {
+            throw new RuntimeException("Ya existe una persona con el mismo tipo de documento, número de documento y país.");
+        }
+
+        if (person.getEmail() == null || person.getEmail().trim().isEmpty()) {
+            throw new RuntimeException("El mail es obligatorio.");
+        }
+
+        if (person.getDocumentNumber() == null || person.getDocumentNumber().trim().isEmpty()) {
+            throw new RuntimeException("El documento es obligatorio.");
+        }
+
+        if (person.getDateOfBirth() == null) {
+            throw new RuntimeException("La fecha de nacimiento es obligatoria.");
+        }
+
+        LocalDate today = LocalDate.now();
+        LocalDate eighteenYearsAgo = today.minusYears(18);
+        if (person.getDateOfBirth().isAfter(eighteenYearsAgo)) {
+            throw new RuntimeException("No se pueden crear personas menores de 18 años.");
+        }
+    }
+
 }
