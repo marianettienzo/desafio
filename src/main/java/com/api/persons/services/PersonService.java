@@ -2,12 +2,12 @@ package com.api.persons.services;
 
 import com.api.persons.models.Person;
 import com.api.persons.repository.IPersonRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PersonService {
@@ -19,8 +19,13 @@ public class PersonService {
         return personRepository.findAll();
     }
 
-    public Optional<Person> getPersonById(Long id) {
-        return personRepository.findById(id);
+    public Person getPersonById(Long id) {
+        try {
+            return personRepository.getOne(id);
+        } catch (EntityNotFoundException ex) {
+            // Manejar la excepción si la entidad no se encuentra
+            throw new RuntimeException("La persona con el ID " + id + " no fue encontrada.", ex);
+        }
     }
 
     public Person createPerson(Person person) {
