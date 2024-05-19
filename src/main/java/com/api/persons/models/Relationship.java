@@ -17,11 +17,11 @@ public class Relationship {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "person1_id", referencedColumnName = "id")
+    @JoinColumn(name = "primary_person_id", referencedColumnName = "id")
     private Person person1;
 
     @ManyToOne
-    @JoinColumn(name = "person2_id", referencedColumnName = "id")
+    @JoinColumn(name = "second_person_id", referencedColumnName = "id")
     private Person person2;
 
     @Enumerated(EnumType.STRING)

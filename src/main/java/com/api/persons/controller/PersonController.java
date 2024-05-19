@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -38,9 +37,13 @@ public class PersonController {
     }
 
     @PostMapping("/persons/add")
-    public ResponseEntity<Person> createPerson(@RequestBody Person person) {
-        Person createdPerson = personService.createPerson(person);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdPerson);
+    public ResponseEntity<?> createPerson(@RequestBody Person person) {
+        try {
+            Person createdPerson = personService.createPerson(person);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdPerson);
+        }catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping("/persons/{id}")

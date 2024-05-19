@@ -7,6 +7,8 @@ import com.api.persons.repository.IRelationshipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class RelationshipService {
 
@@ -14,11 +16,15 @@ public class RelationshipService {
     private IRelationshipRepository relationshipRepository;
 
     public void createRelationship(Person person1, Person person2, RelationshipType relationshipType) {
-        Relationship relationship = new Relationship();
-        relationship.setPerson1(person1);
-        relationship.setPerson2(person2);
-        relationship.setRelationshipType(relationshipType);
+        if (isValidRelationshipType(relationshipType)) {
+            Relationship relationship = new Relationship();
+            relationship.setPerson1(person1);
+            relationship.setPerson2(person2);
+            relationship.setRelationshipType(relationshipType);
         relationshipRepository.save(relationship);
+        } else {
+            throw new IllegalArgumentException("El tipo de relación no es válido");
+        }
     }
 
     public RelationshipType getRelationshipType(Person person1, Person person2) {
@@ -27,5 +33,21 @@ public class RelationshipService {
             return relationship.getRelationshipType();
         }
         return null;
+    }
+
+    public void deleteRelationship(Long relationshipId) {
+        Optional<Relationship> relationshipOptional = relationshipRepository.findById(relationshipId);
+
+        if (relationshipOptional.isPresent()) {
+            relationshipRepository.delete(relationshipOptional.get());
+        } else {
+            throw new IllegalArgumentException("La relación especificada no existe");
+        }
+    }
+
+    private boolean isValidRelationshipType(RelationshipType relationshipType) {
+        return  relationshipType == RelationshipType.HERMANO ||
+                relationshipType == RelationshipType.PRIMO ||
+                relationshipType == RelationshipType.PADRE;
     }
 }
