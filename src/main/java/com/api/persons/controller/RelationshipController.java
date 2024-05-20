@@ -6,7 +6,6 @@ import com.api.persons.responses.RelationshipResponse;
 import com.api.persons.services.PersonService;
 import com.api.persons.services.RelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
