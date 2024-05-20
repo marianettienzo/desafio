@@ -1,6 +1,5 @@
 
 - REQUISITOS PARA INICIAR EL PROYECTO
-- Sistema operativos Solaris, Linux, HP-UX o Windows.
 - Tener instalado Java Development Kit (JDK) 17 en el sistema.
 - Tener instalado maven
 - Tener instalado e iniciada bases de datos MySQL
