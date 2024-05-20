@@ -25,6 +25,9 @@ public class RelationshipController {
         try {
             Person primaryPerson = personService.getPersonById(primaryId);
             Person secondPerson = personService.getPersonById(secondId);
+            if (primaryPerson == null || secondPerson == null) {
+                throw new IllegalArgumentException("Una o ambas personas no existen en el sistema");
+            }
             relationshipService.createRelationship(primaryPerson, secondPerson, relationshipType);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
@@ -37,9 +40,15 @@ public class RelationshipController {
     public ResponseEntity<RelationshipResponse> getRelationship(@PathVariable Long primaryId, @PathVariable Long secondId) {
         Person firstPerson = personService.getPersonById(primaryId);
         Person secondPerson = personService.getPersonById(secondId);
+        if (firstPerson == null || secondPerson == null) {
+            return ResponseEntity.notFound().build();
+        }
         RelationshipType relationshipType = relationshipService.getRelationshipType(firstPerson, secondPerson);
-        String relationshipMessage = firstPerson.getName() + " es " + relationshipType.name() + " de " + secondPerson.getName();
+
+        String relationshipMessage = String.format("%s es %s de %s",
+                firstPerson.getName(), relationshipType.name(), secondPerson.getName());
         RelationshipResponse response = new RelationshipResponse(relationshipMessage);
+
         return ResponseEntity.ok(response);
     }
 
